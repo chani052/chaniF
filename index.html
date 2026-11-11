@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>חורף בריא</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="snow" aria-hidden="true"></canvas>
+<main>
+  <header>
+    <span class="badge">❄ מדריך קצר ונעים</span>
+    <h1>חורף בריא</h1>
+    <p>מעט הרגלים פשוטים, והחורף הופך לעונה חמימה, מלאת אנרגיה ובריאות טובה.</p>
+    <a class="scroll" href="#tips" aria-label="גלול למטה">⌄</a>
+  </header>
+
+  <h2 id="tips">🧣 הרגלים לחורף</h2>
+  <section class="grid">
+    <article class="tip"><span class="ico">🧅</span><h3>שכבות לבוש</h3><p>כמה שכבות דקות מחממות יותר משכבה אחת עבה, וקל להוריד ולהוסיף לפי הצורך.</p></article>
+    <article class="tip"><span class="ico">🍲</span><h3>מרקים חמים</h3><p>מרק ירקות הוא דרך טובה לשלב ירקות, נוזלים וחום בארוחה אחת.</p></article>
+    <article class="tip"><span class="ico">🍵</span><h3>שתייה מספקת</h3><p>גם כשלא חם, הגוף זקוק למים. תה צמחים חם הוא תוספת נעימה.</p></article>
+    <article class="tip"><span class="ico">🍊</span><h3>פירות הדר</h3><p>תפוזים, קלמנטינות ואשכוליות הן פירות העונה, מרעננים ומלאי צבע.</p></article>
+    <article class="tip"><span class="ico">🚶</span><h3>תנועה יומית</h3><p>הליכה קצרה בשעות היום או מתיחות בבית שומרות על הגוף גמיש וערני.</p></article>
+    <article class="tip"><span class="ico">🪟</span><h3>אוורור הבית</h3><p>כמה דקות של חלון פתוח מדי יום מרעננות את האוויר בחדר.</p></article>
+    <article class="tip"><span class="ico">🧼</span><h3>ניקיון ידיים</h3><p>נטילת ידיים תדירה היא אחד ההרגלים הפשוטים והחשובים ביותר.</p></article>
+    <article class="tip"><span class="ico">🛏️</span><h3>שינה טובה</h3><p>שעות שינה קבועות ושמיכה נעימה מסייעות להתחיל את היום ברגל ימין.</p></article>
+  </section>
+
+  <h2>🎯 אינטראקטיבי</h2>
+  <section class="two">
+    <div class="panel">
+      <h3>💧 מעקב שתייה יומי</h3>
+      <p>לחצו על כוס בכל פעם שסיימתם לשתות.</p>
+      <div class="cups" id="cups"></div>
+      <div class="meter" id="meter">0 מתוך 8 כוסות</div>
+    </div>
+
+    <div class="panel check">
+      <h3>✅ משימות היום</h3>
+      <div class="ring" id="ring"><span id="ringTxt">0%</span></div>
+      <label><input type="checkbox"><span>לשתות תה חם</span></label>
+      <label><input type="checkbox"><span>לצאת להליכה קצרה</span></label>
+      <label><input type="checkbox"><span>לאכול פרי הדר</span></label>
+      <label><input type="checkbox"><span>לאוורר את החדר</span></label>
+      <label><input type="checkbox"><span>ללכת לישון בזמן</span></label>
+    </div>
+
+    <div class="panel gen">
+      <h3>💡 טיפ אקראי</h3>
+      <div class="out" id="tipOut">לחצו על הכפתור לקבלת טיפ</div>
+      <button class="btn" id="tipBtn">טיפ חדש</button>
+    </div>
+
+    <div class="panel">
+      <h3>🥣 בנו מרק משלכם</h3>
+      <p>בחרו מרכיבים:</p>
+      <div class="soup" id="soup"></div>
+      <div id="soupMsg"></div>
+    </div>
+  </section>
+
+  <footer>חורף נעים ובריא ❄ — דף לדוגמה</footer>
+</main>
+
+<script>
+/* ---- שלג ---- */
+(function(){
+  const c=document.getElementById('snow'),x=c.getContext('2d');
+  let w,h,flakes=[];
+  function size(){w=c.width=innerWidth;h=c.height=innerHeight}
+  size();addEventListener('resize',size);
+  const n=Math.min(110,Math.floor(innerWidth/12));
+  for(let i=0;i<n;i++)flakes.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.8+.8,s:Math.random()*.9+.3,d:Math.random()*Math.PI*2});
+  (function draw(){
+    x.clearRect(0,0,w,h);x.fillStyle='rgba(255,255,255,.85)';
+    for(const f of flakes){
+      f.y+=f.s;f.d+=.012;f.x+=Math.sin(f.d)*.5;
+      if(f.y>h+5){f.y=-5;f.x=Math.random()*w}
+      x.beginPath();x.arc(f.x,f.y,f.r,0,7);x.fill();
+    }
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* ---- הופעת כרטיסים ---- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.tip').forEach((t,i)=>{t.style.transitionDelay=(i%4)*80+'ms';io.observe(t)});
+
+/* ---- כוסות מים ---- */
+const cupsEl=document.getElementById('cups'),meter=document.getElementById('meter');
+for(let i=0;i<8;i++){
+  const b=document.createElement('button');b.className='cup';b.setAttribute('aria-label','כוס '+(i+1));
+  b.onclick=()=>{b.classList.toggle('full');
+    const k=cupsEl.querySelectorAll('.full').length;
+    meter.textContent=k+' מתוך 8 כוסות'+(k===8?' — כל הכבוד! 🎉':'');};
+  cupsEl.appendChild(b);
+}
+
+/* ---- רשימת משימות ---- */
+const boxes=[...document.querySelectorAll('.check input')],ring=document.getElementById('ring'),ringTxt=document.getElementById('ringTxt');
+boxes.forEach(b=>b.onchange=()=>{
+  const p=Math.round(boxes.filter(i=>i.checked).length/boxes.length*100);
+  ring.style.setProperty('--p',p);ringTxt.textContent=p+'%';
+});
+
+/* ---- טיפים ---- */
+const tips=[
+  'הניחו כוס תה חם לידכם כשאתם עובדים.',
+  'צאו להליכה קצרה בשעות האור.',
+  'הכינו סיר מרק גדול וחלקו אותו לכמה ארוחות.',
+  'חממו את הידיים והצוואר, ותרגישו חמים יותר בכל הגוף.',
+  'הוסיפו פרי הדר לארוחת הבוקר.',
+  'אווררו את הבית כמה דקות מדי יום.',
+  'שמרו על שעת שינה קבועה.',
+  'עשו כמה מתיחות קלות לפני היציאה מהמיטה.',
+  'החזיקו כפפות ומטרייה ליד הדלת.'
+];
+let last=-1;
+document.getElementById('tipBtn').onclick=()=>{
+  let i;do{i=Math.floor(Math.random()*tips.length)}while(i===last);last=i;
+  const o=document.getElementById('tipOut');o.style.opacity=0;
+  setTimeout(()=>{o.textContent=tips[i];o.style.opacity=1},180);
+};
+document.getElementById('tipOut').style.transition='opacity .25s';
+
+/* ---- מרק ---- */
+const items=['גזר','בצל','סלרי','דלעת','תפוח אדמה','עדשים','שומר','כרובית'];
+const soupEl=document.getElementById('soup'),msg=document.getElementById('soupMsg');
+items.forEach(t=>{
+  const b=document.createElement('button');b.className='chip';b.textContent=t;
+  b.onclick=()=>{b.classList.toggle('on');
+    const on=[...soupEl.querySelectorAll('.on')].map(e=>e.textContent);
+    msg.textContent=on.length?('🍲 מרק '+on.join(' ו')+' — בתיאבון!'):'';};
+  soupEl.appendChild(b);
+});
+</script>
+</body>
+</html>
